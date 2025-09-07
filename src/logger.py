@@ -5,10 +5,10 @@ from datetime import datetime
 # gives the current time
 LOG_FILE=f"{datetime.now().strftime("%m_%d_%Y_%H_%M_%s")}.log"
 
-# Combining logs with present current directory
+# Combining logs with in the path /current working directory/logs/log_file
 logs_path=os.path.join(os.getcwd(),"logs",LOG_FILE)
 
-# creating the path
+# creating the directory.If the directory is already present it will not give any error
 os.makedirs(logs_path,exist_ok=True)
 
 # final log path

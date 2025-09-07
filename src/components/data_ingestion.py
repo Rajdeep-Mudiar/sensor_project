@@ -10,10 +10,13 @@ from src.constant import *
 from src.exception import CustomException
 from src.logger import logging
 from src.utils.main_utils import MainUtils
+
+# dataclass is used to create classes which mainly contains data
 from dataclasses import dataclass
 
 @dataclass
 class DataIngestionConfig:
+    # artifact_folder is the main folder where all the artifacts will be stored
     artifact_folder:str=os.path.join(artifact_folder)
 
 

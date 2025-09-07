@@ -1,8 +1,8 @@
-from pymango.mango_client import MongoClient
+from pymongo.mongo_client import MongoClient
 import pandas as pd
 import json
 
-url="mongodb+srv://raj2031g:12345@cluster0.e01gyci.mongodb.net/?"
+url="mongodb+srv://raj2031g:12345@cluster0.e01gyci.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 # Create a new client and connect to the server
 client=MongoClient(url)

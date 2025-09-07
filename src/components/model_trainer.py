@@ -1,3 +1,6 @@
+
+import sys
+from typing import Generator, List, Tuple
 import os
 import pandas as pd
 import numpy as np
@@ -15,64 +18,60 @@ from src.utils.main_utils import MainUtils
 from dataclasses import dataclass
 
 
-'''
-This class defines the configuration for the
-model training process
+
+# This class defines the configuration for the
+# model training process
 
 
-artifact_folder:directory where artifacts
-(like trained models) are stored
+# artifact_folder:directory where artifacts
+# (like trained models) are stored
 
-trained_model_path:path where the final trained model
-will be saved
+# trained_model_path:path where the final trained model
+# will be saved
 
-expected_accuracy:The minimum expected accuracy for 
-the model
+# expected_accuracy:The minimum expected accuracy for 
+# the model
 
-model_config_file_path: Path to the configuration 
-file (model.yaml) that conatains the model 
-hyperparameters
+# model_config_file_path: Path to the configuration 
+# file (model.yaml) that conatains the model 
+# hyperparameters
 
-'''
+
 
 @dataclass
 class ModelTrainerConfig:
-
-
-
-
     artifact_folder=os.path.join(artifact_folder)
     trained_model_path=os.path.join(artifact_folder,"model.pkl")
-    excepted_accuracy=0.45
+    expected_accuracy=0.45
 
     # here config is the folder name 
     model_config_file_path=os.path.join('config','model.yaml')
 
 
 
-'''
-ModelTrainer Class
 
-This is the main class responsible for 
-training,evaluating,and fine-tuning models to 
-find the best one for the given dataset
+# ModelTrainer Class
 
-The main purpose of this class is to initialize the
-ModelTrainer class
+# This is the main class responsible for 
+# training,evaluating,and fine-tuning models to 
+# find the best one for the given dataset
 
-Attributes
+# The main purpose of this class is to initialize the
+# ModelTrainer class
 
-model_trainer_config: Instance of ModelTrainerConfig,
-which contains the configuration for the model
-training process
+# Attributes
 
-utils: Instance of MainUtils,which provides utility
-functions like saving objects
+# model_trainer_config: Instance of ModelTrainerConfig,
+# which contains the configuration for the model
+# training process
 
-models: Dictionary of machine learning models(XGBoost,Gradient Boosting, SVC, and Random Forest)
-that will be trained and evaluated
+# utils: Instance of MainUtils,which provides utility
+# functions like saving objects
 
-'''
+# models: Dictionary of machine learning models(XGBoost,Gradient Boosting, SVC, and Random Forest)
+# that will be trained and evaluated
+
+
 
 
 class ModelTrainer:
@@ -141,7 +140,7 @@ class ModelTrainer:
             return report
         
         except Exception as e:
-            raise CustomException(e,sys)
+            raise CustomException(e, sys)
 
 # get_best_model() Method
 
@@ -192,33 +191,30 @@ class ModelTrainer:
         
         except Exception as e:
             raise CustomException(e,sys)
-        
 
-    '''
+# finetune_best_model() Method
 
-finetune_best_model() Method
+# The purpose of this method is to fine-tune the best
+# model using GridSearchCV to search for the best 
+# hyperparameters
 
-The purpose of this method is to fine-tune the best
-model using GridSearchCV to search for the best 
-hyperparameters
+# Parameters
+# a.best_model_object: The best model(selected from get_best_model())
+# b.best_model_name: The name of the best model
+# c.X_train,y_train : Training data used for fine-tuning
 
-Parameters
-a.best_model_object: The best model(selected from get_best_model())
-b.best_model_name: The name of the best model
-c.X_train,y_train : Training data used for fine-tuning
+# Steps
+# 1. Reads the model's hyperparameter grid from a YAML
+# file using the MainUtils.read_yaml_file() method
 
-Steps
-1. Reads the model's hyperparameter grid from a YAML
-file using the MainUtils.read_yaml_file() method
+# 2.Performs a grid search on the model to find the best
+# hyperparameters
 
-2.Performs a grid search on the model to find the best
-hyperparameters
-
-3.Updates the best model with the fine-tuned parameters
-and returns the fine-tuned model.
+# 3.Updates the best model with the fine-tuned parameters
+# and returns the fine-tuned model.
 
 
-'''
+
 
         
     def finetune_best_model(self,
@@ -248,68 +244,95 @@ and returns the fine-tuned model.
         except Exception as e:
             raise CustomException(e,sys)
         
-        '''
-initiate_model_trainer() method
-Purpose:The main method that orchestrates the entire
-model training,evaluation and fine tuning process
 
-Parameters
-train_array,test_array:Arrays containing training and test data
+# initiate_model_trainer() method
+# Purpose:The main method that orchestrates the entire
+# model training,evaluation and fine tuning process
 
-Steps
-1.Split the input arrays into features(X) and 
-target(y) for both training and testing sets
+# Parameters
+# train_array,test_array:Arrays containing training and test data
 
-2.Calls evaluate_models() to get the performance
-of each model
+# Steps
+# 1.Split the input arrays into features(X) and 
+# target(y) for both training and testing sets
 
-3.Identifies the best model using get_base_model()
+# 2.Calls evaluate_models() to get the performance
+# of each model
 
-4.Fine-tunes the best model using finetune_best_model()
+# 3.Identifies the best model using get_base_model()
 
-5.Trains the fine-tuned model on the training set and
-evaluates its performance on the test set
+# 4.Fine-tunes the best model using finetune_best_model()
 
-6.If the model meets the accuracy threshold,it saves the model
-to disk as a .pkl file
+# 5.Trains the fine-tuned model on the training set and
+# evaluates its performance on the test set
 
-7.return:The path to the saved model
+# 6.If the model meets the accuracy threshold,it saves the model
+# to disk as a .pkl file
 
-'''
+# 7.return:The path to the saved model
 
 
-        def initiate_model_trainer(self,train_array,test_array):
-            try:
-                logging.info(f"Splitting training and testing input and target feature")
 
-                X_train,y_train,X_test,y_test=(
-                    train_array[:,:-1],
-                    train_array[:,-1],
-                    test_array[:,:-1],
-                    test_array[:,-1],
-                )
 
-                logging.info(f"Extracing model config file path")
+    def initiate_model_trainer(self, train_array, test_array):
+        try:
+            logging.info(f"Splitting training and testing input and target feature")
 
-                model_report:dict=self.evaluate_models(X=X_train,y=y_train,models=self.models)
 
-                # To get best model score from dict
-                best_model_score=max(sorted(model_report.values()))
+            x_train, y_train, x_test, y_test = (
+                train_array[:, :-1],
+                train_array[:, -1],
+                test_array[:, :-1],
+                test_array[:, -1],
+            )
 
-                # To get the best model name from dict 
 
-                best_model_name=list(model_report.keys())[
-                    list(model_report.values()).index(best_model_score)
-                ]
+           
 
-                best_model=self.models[best_model_name]
 
-                best_model=self.finetune_best_model(
-                    best_model_nam=best_model_name,
-                    best_model_object=best_model_object,
-                    X_train=X_train,
-                    y_train=y_train
-                )
+            logging.info(f"Extracting model config file path")
+
+
+
+
+           
+
+
+
+
+
+
+            logging.info(f"Extracting model config file path")
+
+
+            model_report: dict = self.evaluate_models(X=x_train, y=y_train, models=self.models)
+
+
+            ## To get best model score from dict
+            best_model_score = max(sorted(model_report.values()))
+
+
+            ## To get best model name from dict
+
+
+            best_model_name = list(model_report.keys())[
+                list(model_report.values()).index(best_model_score)
+            ]
+
+
+
+
+            best_model = self.models[best_model_name]
+
+
+
+
+            best_model = self.finetune_best_model(
+                best_model_name= best_model_name,
+                best_model_object= best_model,
+                X_train= x_train,
+                y_train= y_train
+            )
 
 
             best_model.fit(x_train, y_train)
@@ -355,13 +378,3 @@ to disk as a .pkl file
 
         except Exception as e:
             raise CustomException(e, sys)
-
-
-
-
-
-
-
-
-
-

@@ -4,6 +4,8 @@ import os
 import pandas as pd
 import pickle
 import yaml
+
+# used to interact with AWS S3
 import boto3
 
 
@@ -18,7 +20,7 @@ class MainUtils:
     def __init__(self) -> None:
         pass
 
-
+    # To read ml model related files
     def read_yaml_file(self, filename: str) -> dict:
         try:
             with open(filename, "rb") as yaml_file:
@@ -28,7 +30,7 @@ class MainUtils:
         except Exception as e:
             raise CustomException(e, sys) from e
 
-
+    # To read schema related files
     def read_schema_config_file(self) -> dict:
         try:
             schema_config = self.read_yaml_file(os.path.join("config", "schema.yaml"))
@@ -45,6 +47,7 @@ class MainUtils:
 
 
     @staticmethod
+    # To save the model file
     def save_object(file_path: str, obj: object) -> None:
         logging.info("Entered the save_object method of MainUtils class")
 
